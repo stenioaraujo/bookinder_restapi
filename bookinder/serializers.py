@@ -13,10 +13,10 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'first_name',\
-                  'last_name', 'email']
-        read_only_fields = ['is_staff', 'is_superuser']
-        write_only_fields = ['password']
+        fields = ('id', 'username', 'password', 'first_name',\
+                  'last_name', 'email')
+        read_only_fields = ('is_staff', 'is_superuser')
+        write_only_fields = ('password',)
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -39,16 +39,18 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class BookSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Book
-        fields = ('title', 'isbn', 'pages')
+        fields = ('isbn', 'title', 'pages')
         
 
-class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
+class UserProfileSerializer(serializers.HyperlinkedModelSerializer):    
     class Meta:
         model = models.UserProfile
-        fields = ('age', 'user')
+        fields = ('id', 'age', 'user')
+        read_only_fields = ('user',)
 
 
-class LibrarySerializer(serializers.HyperlinkedModelSerializer):
+class LibrarySerializer(serializers.HyperlinkedModelSerializer):    
     class Meta:
         model = models.Library
-        fields = ('user', 'book', 'favorite', 'tradeable', 'pages_read')
+        fields = ('id', 'user', 'book', 'favorite', 'tradeable', 'pages_read')
+        read_only_fields = ('user',)

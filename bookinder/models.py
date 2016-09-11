@@ -1,8 +1,18 @@
 from __future__ import unicode_literals
 
-from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
+            
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
@@ -16,7 +26,7 @@ class Book(models.Model):
 
 
 class Library(models.Model):
-    user = models.ForeignKey(UserProfile)
+    user = models.ForeignKey(User)
     book = models.ForeignKey(Book)
     favorite = models.BooleanField(default=False)
     tradeable = models.BooleanField(default=False)

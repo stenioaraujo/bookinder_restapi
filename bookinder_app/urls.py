@@ -13,20 +13,23 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from bookinder import views
+
 from django.conf.urls import url, include
 from rest_framework import routers
-from bookinder import views
+from rest_framework.authtoken import views as authtoken_view
 
 router = routers.DefaultRouter()
 router.register(r'users_profiles', views.UserProfileViewSet)
 router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
 router.register(r'books', views.BookViewSet)
 router.register(r'library', views.LibraryViewSet, base_name="library")
 
 urlpatterns = [
     url(r'^', include(router.urls), name='home'),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^api-auth/', include('rest_framework.urls',
+                               namespace='rest_framework')),
+    url(r'^api-token-auth/', authtoken_view.obtain_auth_token)
 ]
 
 
