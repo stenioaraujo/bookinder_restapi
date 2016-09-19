@@ -45,7 +45,8 @@ class BookSerializer(serializers.HyperlinkedModelSerializer):
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):    
     class Meta:
         model = models.UserProfile
-        fields = ('id', 'age', 'user')
+        fields = ('id', 'user', 'email_facebook', 'email_google', \
+                  'first_time')
         read_only_fields = ('user',)
 
 

@@ -12,9 +12,16 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
-from settings_credentials import DATABASES, SECRET_KEY
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'bookinder_restapi',
+    }
+}
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = '#l$2u7@3h+1h!nw=k2sjazfpg-qsiho2oocwf940!%8^#7z$02'
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -43,6 +50,7 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),

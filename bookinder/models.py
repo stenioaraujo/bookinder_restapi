@@ -16,13 +16,15 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    age = models.IntegerField()
+    email_facebook = models.CharField(max_length=50, default="", blank=True)
+    email_google = models.CharField(max_length=50, default="", blank=True)
+    first_time = models.BooleanField(default=True)
 
 
 class Book(models.Model):
     title = models.CharField(max_length=256)
     isbn = models.CharField(max_length=11, primary_key=True)
-    pages = models.CharField(max_length=4)
+    pages = models.IntegerField()
 
 
 class Library(models.Model):
@@ -30,4 +32,4 @@ class Library(models.Model):
     book = models.ForeignKey(Book)
     favorite = models.BooleanField(default=False)
     tradeable = models.BooleanField(default=False)
-    pages_read = models.CharField(max_length=4, default=0)
+    pages_read = models.IntegerField(default=0)
