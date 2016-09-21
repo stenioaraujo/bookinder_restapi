@@ -56,3 +56,11 @@ class LibrarySerializer(serializers.HyperlinkedModelSerializer):
         model = models.Library
         fields = ('id', 'user', 'book', 'favorite', 'tradeable', 'read_pages')
         read_only_fields = ('user',)
+
+
+class PreferenciaLivroSerializer(serializers.HyperlinkedModelSerializer):    
+    class Meta:
+        model = models.PreferenciaLivro
+        fields = ('id', 'user', 'book', 'blocked', 'liked', \
+                  'owned', 'interested')
+        read_only_fields = ('user',)

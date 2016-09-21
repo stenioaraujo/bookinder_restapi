@@ -24,6 +24,8 @@ router.register(r'users_profiles', views.UserProfileViewSet)
 router.register(r'users', views.UserViewSet)
 router.register(r'books', views.BookViewSet)
 router.register(r'library', views.LibraryViewSet, base_name="library")
+router.register(r'preferenciaLivros',
+                views.PreferenciaLivroViewSet, base_name="library")
 
 urlpatterns = [
     url(r'^', include(router.urls), name='home'),

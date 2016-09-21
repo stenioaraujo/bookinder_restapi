@@ -64,4 +64,19 @@ class LibraryViewSet(viewsets.ModelViewSet):
             return models.Library.objects.filter(user=self.request.user)
 
 
+class PreferenciaLivroViewSet(viewsets.ModelViewSet):
+    queryset = models.PreferenciaLivro.objects.all()
+    serializer_class = serializers.PreferenciaLivroSerializer
+    permission_classes = (permissions.IsOwnerOrSuperUser,)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+        
+    def get_queryset(self):        
+        if (self.request.user.is_superuser):
+            return models.PreferenciaLivro.objects.all()
+        else:
+            return models.PreferenciaLivro.objects.filter(user=self.request.user)
+
+
 

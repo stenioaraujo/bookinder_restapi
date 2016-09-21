@@ -38,3 +38,14 @@ class Library(models.Model):
     favorite = models.BooleanField(default=False)
     tradeable = models.BooleanField(default=False)
     read_pages = models.IntegerField(default=0)
+
+
+class PreferenciaLivro(models.Model):
+    user = models.ForeignKey(User)
+    book = models.ForeignKey(Book)
+    blocked = models.BooleanField(default=False)
+    liked = models.BooleanField(default=False)
+    owned = models.BooleanField(default=False)
+    interested = models.BooleanField(default=False)
+    
+    unique_together = ((user, book),) # Pode ser so a tupla, se for so 2
