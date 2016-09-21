@@ -22,9 +22,14 @@ class UserProfile(models.Model):
 
 
 class Book(models.Model):
-    title = models.CharField(max_length=256)
     isbn = models.CharField(max_length=11, primary_key=True)
-    pages = models.IntegerField()
+    paginas = models.IntegerField(default=0)
+    autor = models.CharField(max_length=256, default="", blank=True)
+    editora = models.CharField(max_length=256, default="", blank=True)
+    nome = models.CharField(max_length=256, default="", blank=True)
+    img_file_path = models.CharField(max_length=256, default="", blank=True)
+    url_img = models.CharField(max_length=256, default="", blank=True)
+    res_id = models.IntegerField(default=0)
 
 
 class Library(models.Model):
@@ -32,4 +37,4 @@ class Library(models.Model):
     book = models.ForeignKey(Book)
     favorite = models.BooleanField(default=False)
     tradeable = models.BooleanField(default=False)
-    pages_read = models.IntegerField(default=0)
+    read_pages = models.IntegerField(default=0)

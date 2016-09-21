@@ -54,10 +54,8 @@ class LibraryViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.LibrarySerializer
     permission_classes = (permissions.IsOwnerOrSuperUser,)
     
-    
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
-        
         
     def get_queryset(self):        
         if (self.request.user.is_superuser):

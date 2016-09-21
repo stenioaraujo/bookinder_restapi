@@ -39,7 +39,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class BookSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Book
-        fields = ('isbn', 'title', 'pages')
+        fields = ('isbn', 'nome', 'autor', 'paginas', 'editora', 'url_img', \
+                  'img_file_path', 'res_id')
         
 
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):    
@@ -53,5 +54,5 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
 class LibrarySerializer(serializers.HyperlinkedModelSerializer):    
     class Meta:
         model = models.Library
-        fields = ('id', 'user', 'book', 'favorite', 'tradeable', 'pages_read')
+        fields = ('id', 'user', 'book', 'favorite', 'tradeable', 'read_pages')
         read_only_fields = ('user',)
