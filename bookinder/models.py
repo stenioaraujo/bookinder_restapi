@@ -41,11 +41,13 @@ class Library(models.Model):
 
 
 class PreferenciaLivro(models.Model):
+    class Meta:
+        unique_together = (("user", "book"),) # Pode ser so a tupla, se for 2
+        
+    
     user = models.ForeignKey(User)
     book = models.ForeignKey(Book)
     blocked = models.BooleanField(default=False)
     liked = models.BooleanField(default=False)
     owned = models.BooleanField(default=False)
     interested = models.BooleanField(default=False)
-    
-    unique_together = ((user, book),) # Pode ser so a tupla, se for so 2
