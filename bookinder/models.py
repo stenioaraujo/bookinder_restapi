@@ -33,21 +33,30 @@ class Book(models.Model):
 
 
 class Library(models.Model):
+    class Meta:
+        unique_together = (("user", "book"),) # Pode ser so a tupla, se for 2
+        
     user = models.ForeignKey(User)
     book = models.ForeignKey(Book)
     favorite = models.BooleanField(default=False)
     tradeable = models.BooleanField(default=False)
-    read_pages = models.IntegerField(default=0)
-
-
-class PreferenciaLivro(models.Model):
-    class Meta:
-        unique_together = (("user", "book"),) # Pode ser so a tupla, se for 2
-        
-    
-    user = models.ForeignKey(User)
-    book = models.ForeignKey(Book)
     blocked = models.BooleanField(default=False)
     liked = models.BooleanField(default=False)
     owned = models.BooleanField(default=False)
     interested = models.BooleanField(default=False)
+    read_pages = models.IntegerField(default=0)
+
+
+class Match(models.Model):
+    class Meta:
+        # Pode ser so a tupla, se for 2
+        unique_together = (("user1", "book1", "user2", "book2"),) 
+    
+    id = models.CharField(max_length=256, primary_key=True)
+    user1 = models.ForeignKey(User, related_name='user1')
+    book1 = models.ForeignKey(Book, related_name='book1')
+    user2 = models.ForeignKey(User, related_name='user2')
+    book2 = models.ForeignKey(Book, related_name='book2')
+    decided = models.BooleanField(default=False)
+    accepted = models.BooleanField(default=False)
+    rejected = models.BooleanField(default=False)

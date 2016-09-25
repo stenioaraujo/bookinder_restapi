@@ -62,21 +62,29 @@ class LibraryViewSet(viewsets.ModelViewSet):
             return models.Library.objects.all()
         else:
             return models.Library.objects.filter(user=self.request.user)
+            
+            
+class MatchViewSet(viewsets.ModelViewSet):
+    queryset = models.Match.objects.all()
+    serializer_class = serializers.MatchSerializer
+    # Fazer o metodo aqui, so permitir admin criar, mas permitir que usuario
+    # faca put patch nos outros campos, e que ele possa ler
 
+            
+class CreateMatches(viewsets.ModelViewSet):
+    serializer_class = serializers.MatchSerializer
 
-class PreferenciaLivroViewSet(viewsets.ModelViewSet):
-    queryset = models.PreferenciaLivro.objects.all()
-    serializer_class = serializers.PreferenciaLivroSerializer
-    permission_classes = (permissions.IsOwnerOrSuperUser,)
-    
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-        
-    def get_queryset(self):        
-        if (self.request.user.is_superuser):
-            return models.PreferenciaLivro.objects.all()
-        else:
-            return models.PreferenciaLivro.objects.filter(user=self.request.user)
-
-
-
+    def get_queryset(self):
+        sql = ("SELECT abs(strftime('%s','now') + random()) AS id,"
+                     " I1.user_id AS user1, I2.book_id AS book1,"
+                     " I2.user_id AS user2, I1.book_id AS book2"
+               " FROM bookinder_library AS I1, bookinder_library AS O1,"
+                    " bookinder_library AS I2, bookinder_library AS O2"
+               " WHERE I1.interested AND I2.interested"
+                     " AND O1.owned AND O2.owned"
+                     " AND I1.book_id = O1.book_id AND I2.book_id = O2.book_id"
+                     " AND I1.user_id = O2.user_id"
+                     " AND O1.user_id = I2.user_id")
+        libraryset = models.Library.objects.raw(sql)
+                          
+        return list(libraryset)

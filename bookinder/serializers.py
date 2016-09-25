@@ -54,13 +54,33 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
 class LibrarySerializer(serializers.HyperlinkedModelSerializer):    
     class Meta:
         model = models.Library
-        fields = ('id', 'user', 'book', 'favorite', 'tradeable', 'read_pages')
-        read_only_fields = ('user',)
-
-
-class PreferenciaLivroSerializer(serializers.HyperlinkedModelSerializer):    
-    class Meta:
-        model = models.PreferenciaLivro
         fields = ('id', 'user', 'book', 'blocked', 'liked', \
-                  'owned', 'interested')
+                  'owned', 'interested', 'favorite', 'tradeable', 'read_pages')
         read_only_fields = ('user',)
+
+class MatchSerializer(serializers.HyperlinkedModelSerializer):    
+    class Meta:
+        model = models.Match
+        fields = ('id', 'user1', 'book1', 'user2', 'book2', \
+                  'decided', 'accepted', 'rejected')
+
+    def create(self, validated_data):
+        user_tem = validated_data.get('user_tem', None)
+        user_quer = validated_data.get('user_quer', None)
+        instance = self.Meta.model(**validated_data)
+        if user_tem == user_quer:
+            raise serializers.ValidationError(("User_tem needs to be"
+                                               " different than User_quer."))
+        instance.save()
+        return instance
+
+    def update(self, instance, validated_data):        
+        user_tem = validated_data.get('user_tem', None)
+        user_quer = validated_data.get('user_quer', None)
+        if user_tem == user_quer:
+            raise serializers.ValidationError(("User_tem needs to be"
+                                               " different than User_quer."))
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
