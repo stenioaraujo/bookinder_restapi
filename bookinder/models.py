@@ -34,7 +34,7 @@ class Book(models.Model):
 
 class Library(models.Model):
     class Meta:
-        unique_together = (("user", "book"),) # Pode ser so a tupla, se for 2
+        unique_together = (("user", "book"),)  # Pode ser so a tupla, se for 2
         
     user = models.ForeignKey(User)
     book = models.ForeignKey(Book)
@@ -57,6 +57,7 @@ class Match(models.Model):
     book1 = models.ForeignKey(Book, related_name='book1')
     user2 = models.ForeignKey(User, related_name='user2')
     book2 = models.ForeignKey(Book, related_name='book2')
-    decided = models.BooleanField(default=False)
     accepted = models.BooleanField(default=False)
+    user1_accepted = models.BooleanField(default=False)
+    user2_accepted = models.BooleanField(default=False)
     rejected = models.BooleanField(default=False)

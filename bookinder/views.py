@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import permissions as rest_permissions
 from rest_framework import viewsets
+from collections import namedtuple
 
 from bookinder import models
 from bookinder import permissions
@@ -12,15 +13,13 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UserSerializer
     permission_classes = (permissions.IsOwnerOrSuperUser,)
     
-    
     def get_queryset(self):
         user = self.request.user
         
-        if (self.request.user.is_superuser):
+        if self.request.user.is_superuser:
             return User.objects.all()
         else:
             return User.objects.filter(username=user)
-        
 
 
 class BookViewSet(viewsets.ModelViewSet):
@@ -34,16 +33,14 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UserProfileSerializer
     permission_classes = (permissions.IsOwnerOrSuperUser,)
     
-    
     def perform_create(self, serializer):
         user = self.request.user
         serializer.save(user=user)
 
-            
     def get_queryset(self):
         user = self.request.user
         
-        if (self.request.user.is_superuser):
+        if self.request.user.is_superuser:
             return models.UserProfile.objects.all()
         else:
             return models.UserProfile.objects.filter(user=user)
@@ -58,7 +55,7 @@ class LibraryViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
         
     def get_queryset(self):        
-        if (self.request.user.is_superuser):
+        if self.request.user.is_superuser:
             return models.Library.objects.all()
         else:
             return models.Library.objects.filter(user=self.request.user)
@@ -67,24 +64,46 @@ class LibraryViewSet(viewsets.ModelViewSet):
 class MatchViewSet(viewsets.ModelViewSet):
     queryset = models.Match.objects.all()
     serializer_class = serializers.MatchSerializer
+    permission_classes = (permissions.IsOwnerOrSuperUser,)
     # Fazer o metodo aqui, so permitir admin criar, mas permitir que usuario
     # faca put patch nos outros campos, e que ele possa ler
 
             
 class CreateMatches(viewsets.ModelViewSet):
     serializer_class = serializers.MatchSerializer
+    permission_classes = (permissions.IsAdminOrReadOnly,)
 
     def get_queryset(self):
         sql = ("SELECT abs(strftime('%s','now') + random()) AS id,"
-                     " I1.user_id AS user1, I2.book_id AS book1,"
-                     " I2.user_id AS user2, I1.book_id AS book2"
-               " FROM bookinder_library AS I1, bookinder_library AS O1,"
-                    " bookinder_library AS I2, bookinder_library AS O2"
-               " WHERE I1.interested AND I2.interested"
-                     " AND O1.owned AND O2.owned"
-                     " AND I1.book_id = O1.book_id AND I2.book_id = O2.book_id"
-                     " AND I1.user_id = O2.user_id"
-                     " AND O1.user_id = I2.user_id")
-        libraryset = models.Library.objects.raw(sql)
-                          
-        return list(libraryset)
+               " I1.user_id AS user1, I2.book_id AS book1,"
+               " I2.user_id AS user2, I1.book_id AS book2 "
+               "FROM bookinder_library AS I1, bookinder_library AS O1,"
+               " bookinder_library AS I2, bookinder_library AS O2 "
+               "WHERE I1.interested AND I2.interested"
+               " AND O1.owned AND O2.owned"
+               " AND I1.book_id = O1.book_id AND I2.book_id = O2.book_id"
+               " AND I1.user_id = O2.user_id"
+               " AND O1.user_id = I2.user_id")
+        matchset = models.Library.objects.raw(sql)
+
+        self._save_to_match_table(matchset)
+
+        return list(matchset)
+
+    def _save_to_match_table(self, matchset):
+        match_serializer = serializers.MatchSerializer()
+        user_objects = models.User.objects
+        book_objects = models.Book.objects
+        for match in matchset:
+            try:
+                new_match = {
+                    "id": match.id,
+                    "user1": user_objects.get(id=match.user1),
+                    "user2": user_objects.get(id=match.user2),
+                    "book1": book_objects.get(isbn=match.book1),
+                    "book2": book_objects.get(isbn=match.book2)
+                }
+                match_serializer.create(new_match)
+                print("adicionou")
+            except Exception:
+                pass

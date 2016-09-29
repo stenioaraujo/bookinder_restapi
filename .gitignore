@@ -2,3 +2,4 @@ bookinder_app/settings_credentials.py
 *.pyc
 bookinder/migrations/*
 .env
+.idea
