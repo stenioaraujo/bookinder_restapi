@@ -104,6 +104,5 @@ class CreateMatches(viewsets.ModelViewSet):
                     "book2": book_objects.get(isbn=match.book2)
                 }
                 match_serializer.create(new_match)
-                print("adicionou")
             except Exception:
                 pass

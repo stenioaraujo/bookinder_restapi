@@ -77,7 +77,6 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
 
     def update(self, instance, validated_data):        
         user1 = validated_data.get('user1', None)
-        print(user1)
         user2 = validated_data.get('user2', None)
         if user1 == user2:
             raise serializers.ValidationError(("User_tem needs to be"
