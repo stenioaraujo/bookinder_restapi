@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import permissions as rest_permissions
 from rest_framework import viewsets
-from collections import namedtuple
 
 from bookinder import models
 from bookinder import permissions
@@ -72,6 +71,7 @@ class MatchViewSet(viewsets.ModelViewSet):
 class CreateMatches(viewsets.ModelViewSet):
     serializer_class = serializers.MatchSerializer
     permission_classes = (permissions.IsAdminOrReadOnly,)
+    first_time = True
 
     def get_queryset(self):
         sql = ("SELECT abs(strftime('%s','now') + random()) AS id,"
@@ -88,12 +88,29 @@ class CreateMatches(viewsets.ModelViewSet):
 
         self._save_to_match_table(matchset)
 
+        self.first_time = False
+
         return list(matchset)
 
     def _save_to_match_table(self, matchset):
+        def not_in(match, s):
+            tup1 = (match["user1"].id, match["book1"].isbn,
+                    match["user2"].id, match["book2"].isbn)
+            tup2 = tup1[2:4] + tup1[0:2]
+
+            if (self.first_time
+                and tup1 not in s
+                and tup2 not in s):
+                print(tup1)
+                s.add(tup1)
+                return True
+            else:
+                return False
+
         match_serializer = serializers.MatchSerializer()
         user_objects = models.User.objects
         book_objects = models.Book.objects
+        already_inserted = set()
         for match in matchset:
             try:
                 new_match = {
@@ -103,7 +120,7 @@ class CreateMatches(viewsets.ModelViewSet):
                     "book1": book_objects.get(isbn=match.book1),
                     "book2": book_objects.get(isbn=match.book2)
                 }
-                match_serializer.create(new_match)
-                print("adicionou")
+                if not_in(new_match, already_inserted):
+                    match_serializer.create(new_match)
             except Exception:
                 pass
