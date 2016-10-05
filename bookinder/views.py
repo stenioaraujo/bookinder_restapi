@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import permissions as rest_permissions
 from rest_framework import viewsets
+from url_filter.integrations.drf import DjangoFilterBackend
 
 from bookinder import models
 from bookinder import permissions
@@ -49,6 +50,8 @@ class LibraryViewSet(viewsets.ModelViewSet):
     queryset = models.Library.objects.all()
     serializer_class = serializers.LibrarySerializer
     permission_classes = (permissions.IsOwnerOrSuperUser,)
+    filter_backends = [DjangoFilterBackend,]
+    filter_fields = ["interested", "blocked"]
     
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
