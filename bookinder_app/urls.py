@@ -25,6 +25,8 @@ router.register(r'users', views.UserViewSet)
 router.register(r'books', views.BookViewSet)
 router.register(r'library', views.LibraryViewSet, base_name="library")
 router.register(r'matches', views.MatchViewSet, base_name="matches")
+router.register(r'matches_read', views.MatchReadViewSet,
+                base_name="matches_read")
 router.register(r'create_matches', views.CreateMatches,
                 base_name="create_matches")
 

@@ -70,6 +70,14 @@ class MatchViewSet(viewsets.ModelViewSet):
     # Fazer o metodo aqui, so permitir admin criar, mas permitir que usuario
     # faca put patch nos outros campos, e que ele possa ler
 
+
+class MatchReadViewSet(viewsets.ModelViewSet):
+    queryset = models.Match.objects.all()
+    serializer_class = serializers.MatchReadSerializer
+    permission_classes = (permissions.IsAdminOrReadOnly,)
+    filter_backends = [DjangoFilterBackend,]
+    filter_fields = ["rejected", "accepted"]
+
             
 class CreateMatches(viewsets.ModelViewSet):
     serializer_class = serializers.MatchSerializer

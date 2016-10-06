@@ -63,7 +63,7 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = models.Match
         fields = ('id', 'user1', 'book1', 'user2', 'book2',
-                  'accepted', 'user1_accepted', 'user2_accepted','rejected')
+                  'accepted', 'user1_accepted', 'user2_accepted', 'rejected')
 
     def create(self, validated_data):
         user1 = validated_data.get('user1', None)
@@ -92,3 +92,11 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
 
         instance.save()
         return instance
+
+
+class MatchReadSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = models.Match
+        fields = ('id', 'user1', 'book1', 'user2', 'book2',
+                  'accepted', 'user1_accepted', 'user2_accepted', 'rejected')
+        depth = 2
