@@ -1,9 +1,11 @@
-#!/usr/bin/python3.4
+#!/usr/bin/python
+#
+# -*- coding: utf-8 -*-
 
 import requests
 
 
 try:
-    print(requests.get("http://localhost:8000/create_matches").status_code)
+    print(requests.get("http://localhost:8844/create_matches").status_code)
 except:
-    print("Não criei match nenhum, mals")
+    print("Nao criei match nenhum, mals")
