@@ -7,6 +7,8 @@ from bookinder import models
 from bookinder import permissions
 from bookinder import serializers
 
+import django.db.models.query
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -77,6 +79,18 @@ class MatchReadViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAdminOrReadOnly,)
     filter_backends = [DjangoFilterBackend,]
     filter_fields = ["rejected", "accepted"]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return models.Match.objects.all()
+        else:
+            user1 = models.Match.objects.filter(user1=self.request.user)
+            user2 = models.Match.objects.filter(user2=self.request.user)
+
+            return user1 | user2
 
             
 class CreateMatches(viewsets.ModelViewSet):
